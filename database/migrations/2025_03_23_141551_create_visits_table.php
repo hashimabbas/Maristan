@@ -6,24 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('visits', function (Blueprint $table) {
             $table->id();
-            $table->string('ip_address')->nullable(); // Store IP address (optional, consider anonymization)
-            $table->string('user_agent')->nullable(); // Store user agent (optional)
-            $table->string('page_url');           // The URL visited
-            $table->timestamp('visited_at')->useCurrent();
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade'); // Track logged-in user
+            $table->string('ip_address', 45)->nullable(); // Store anonymized/hashed IP
+            $table->text('user_agent')->nullable();
+            $table->text('page_url');
+            $table->text('referrer_url')->nullable();
+            $table->string('session_id')->nullable()->index(); // To group actions within a session
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('visits');

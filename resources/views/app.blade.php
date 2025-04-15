@@ -30,6 +30,15 @@
             }
         </style>
 
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZNDYK4KF2Q"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-ZNDYK4KF2Q');
+        </script>
         <title inertia>{{ config('app.name', 'Maristan') }}</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">

@@ -1,46 +1,64 @@
 import React from 'react';
 import { TextAnimate } from "./../../../js/components/ui/magicui/text-animate";
+import { useTranslation } from 'react-i18next';
+import { cn } from "@/lib/utils";
+import { ReactNode } from 'react';
 
-function AboutUs() {
+interface AboutUsProps { // Add this interface to define the props
+    children?: ReactNode; // Make children optional
+}
+
+function AboutUs({ children }: AboutUsProps) {
+    const { t, i18n } = useTranslation();
+    const isRtl = i18n.language === 'ar';
+
+    const textAlignmentClass = isRtl ? 'text-right' : 'text-left';
+    const textAlignStartClass = isRtl ? 'md:text-right' : 'md:text-left';
+    const floatClass = isRtl ? 'md:float-left' : 'md:float-right';
+
     return (
         <section className="bg-white py-12 px-6 rounded-2xl shadow-md dark:bg-gray-900 dark:text-gray-100 mt-6">
             <div className="container mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                    <div className="relative">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center" dir={isRtl ? "rtl" : "ltr"}>
+                    <div className={`relative ${floatClass}`}>
                         <img
                             src="/images/medicine-2994788_1280.jpg"
-                            alt="Maristan Pharmaceutical Company"
-                            className="w-full rounded-xl object-cover shadow-lg transition-transform duration-300 hover:scale-105" // Added hover effect
-                            style={{ aspectRatio: '4/3', maxWidth: '450px', margin: '0 auto' }} // Set max width and center on smaller screens
+                            alt={t("aboutUs.title")}
+                            className="w-full rounded-xl object-cover shadow-lg transition-transform duration-300 hover:scale-105"
+                            style={{ aspectRatio: '4/3', maxWidth: '450px', margin: '0 auto' }}
                         />
                     </div>
                     <div>
-                        <h2 className="text-3xl font-extrabold text-gray-800 mb-4 dark:text-white">
-                            <TextAnimate animation="blurInUp" by="character" once>
-                                Our Commitment to Healthcare
-                            </TextAnimate>
+                        <h2 className={cn("text-3xl font-extrabold text-primary mb-4", textAlignmentClass)}>
+                            {isRtl ? (t('aboutUs.title')) : (
+                                <TextAnimate animation="blurInUp" by="character" once>
+                                    {t('aboutUs.title')}
+                                </TextAnimate>
+                            )}
                         </h2>
-                        <div className="prose lg:prose-lg max-w-none text-gray-700 dark:text-gray-300">
+                        <div className={`prose lg:prose-lg max-w-none text-gray-700 dark:text-gray-300 ${textAlignStartClass}`}>
                             <p>
-                                Established in 2018, Maristan Pharmaceutical Company is a leading pharmaceutical provider based in Atbara, Sudan.
-
+                                {t('aboutUs.paragraph1')}
                             </p>
                             <p>
-                                Our core mission is to deliver innovative, affordable, and readily accessible healthcare solutions to the communities we serve.
-
+                                {t('aboutUs.paragraph2')}
                             </p>
                             <p>
-                                We bring unparalleled expertise to pharmaceutical distribution and retail, guaranteeing consistently high-quality products, prompt delivery, and exceptional customer support, all driven by our deep commitment to improving lives.
+                                {t('aboutUs.paragraph3')}
                             </p>
                         </div>
                         <div className="mt-6">
                             <a
                                 href="#"
-                                className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-5 rounded-lg transition-colors duration-200 shadow-md dark:bg-indigo-500 dark:hover:bg-indigo-400"
+                                className="inline-block bg-primary hover:bg-indigo-700 text-white font-semibold py-2.5 px-5 rounded-lg transition-colors duration-200 shadow-md dark:bg-primary dark:hover:bg-indigo-400"
                             >
-                                <TextAnimate animation="blurInUp" by="character" once>
-                                    Learn More
-                                </TextAnimate>
+                                {isRtl ? (t('aboutUs.title')) : (
+                                    <TextAnimate animation="blurInUp" by="character" once>
+                                        {t('aboutUs.learnMore')}
+                                    </TextAnimate>
+                                )}
+
+
                             </a>
                         </div>
                     </div>

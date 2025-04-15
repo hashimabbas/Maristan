@@ -5,7 +5,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: oklch(0.62 0.17 261.44);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -41,7 +41,7 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
+  --primary: oklch(0.62 0.17 261.44);
   --primary-foreground: oklch(0.205 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
@@ -67,4 +67,47 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+}
+
+/* Define the Almarai font face */
+@font-face {
+  font-family: 'Almarai';
+  font-weight: 400;
+  font-style: normal;
+  src: url('./fonts/Almarai-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Almarai';
+  font-weight: 700;
+  font-style: normal;
+  src: url('./fonts/Almarai-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Inter';
+  src:
+    url('/fonts/Inter-Regular.woff2') format('truetype'),
+    url('/fonts/Inter-Regular.woff') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  /* font-family: 'Inter', sans-serif;  */
+  font-family: 'Almarai', 'Inter';
+}
+
+/* Arabic-Specific Styles */
+html[lang='ar'] body {
+  font-family: 'Almarai', sans-serif;
+}
+
+/* Apply font to specific component/class */
+.arabic-font {
+  font-family: 'Almarai', sans-serif;
+}
+
+.english-font {
+  font-family: 'Inter', sans-serif;
 }

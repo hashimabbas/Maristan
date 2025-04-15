@@ -1,5 +1,7 @@
 import React from 'react';
 import { TextAnimate } from "./../../../js/components/ui/magicui/text-animate";
+import { useTranslation } from 'react-i18next';
+import { cn } from "@/lib/utils";
 
 interface ProductService {
     id: number;
@@ -8,71 +10,70 @@ interface ProductService {
     icon: string;
 }
 
-interface ProductsServicesProps { }
+interface ProductsServicesProps {
+    className?: string;
+}
 
-const ProductsServices: React.FC<ProductsServicesProps> = () => {
+const ProductsServices: React.FC<ProductsServicesProps> = ({ className }) => {
+    const { t } = useTranslation();
+    const isRtl = false; // Hardcoded as per your note
+
     const productsServicesData: ProductService[] = [
         {
             id: 1,
-            header: 'High-quality',
-            description: 'Pharmaceutical products',
+            header: t('productsServices.highQualityHeader'),
+            description: t('productsServices.highQualityDescription'),
             icon: '/icons/quality-products.png',
         },
         {
             id: 2,
-            header: 'Customized Solutions',
-            description: 'Tailored pharmaceutical services',
+            header: t('productsServices.customizedSolutionsHeader'),
+            description: t('productsServices.customizedSolutionsDescription'),
             icon: '/icons/custom-solutions.png',
         },
         {
             id: 3,
-            header: 'Research & Development',
-            description: 'Innovative product pipeline',
+            header: t('productsServices.researchDevelopmentHeader'),
+            description: t('productsServices.researchDevelopmentDescription'),
             icon: '/icons/research-development.png',
         },
         {
             id: 4,
-            header: 'Distribution',
-            description: 'Our extensive network covers Egypt, Sudan, and the UAE, ensuring efficient delivery',
+            header: t('productsServices.distributionHeader'),
+            description: t('productsServices.distributionDescription'),
             icon: '/icons/distribution.png',
         },
         {
             id: 5,
-            header: 'Supply Chain Management',
-            description: 'Reliable sourcing, storage, and logistics solutions',
+            header: t('productsServices.supplyChainHeader'),
+            description: t('productsServices.supplyChainDescription'),
             icon: '/icons/supply-chain.png',
         },
     ];
 
     return (
-        <section
-            className="py-24 bg-cover bg-center relative mt-4"
-            style={{ backgroundImage: 'url("/images/region-hexagon.png")' }}
-        >
-            <div className="absolute inset-0 bg-blue-900/50"></div>
-            {/* Dark blue overlay */}
-            <div className="container mx-auto px-4 relative z-10">
-                <h2 className="text-5xl font-bold text-white text-left mb-16">
+        <section className={cn("py-16 bg-gray-100 dark:bg-gray-900", className)}>
+            <div className="container mx-auto px-4">
+                <h2 className="text-3xl font-bold text-center text-primary dark:text-white mb-12">
                     <TextAnimate animation="scaleUp" by="text">
-                        Products/Services
+                        {t('productsServices.productsServices')}
                     </TextAnimate>
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {productsServicesData.map((item) => (
                         <div
                             key={item.id}
-                            className="relative p-6 rounded-xl bg-white/10 backdrop-blur-md text-white flex items-start"
+                            className="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transition-shadow flex flex-col items-center text-center"
                         >
                             <img
                                 src={item.icon}
                                 alt={`${item.header} Icon`}
-                                className="w-16 h-16 mr-4 object-contain" // Size, margin, object fit
+                                className="w-20 h-20 mb-4 object-contain"
                             />
-                            <div>
-                                {/* No longer absolutely positioned */}
-                                <h3 className="text-xl font-semibold mb-2"><TextAnimate animation="scaleUp" by="text">{item.header}</TextAnimate></h3>
-                                <p className="text-gray-300">{item.description}</p>
-                            </div>
+                            <h3 className="text-xl font-semibold text-primary dark:text-white mb-2">
+                                <TextAnimate animation="scaleUp" by="text">{item.header}</TextAnimate>
+                            </h3>
+                            <p className="text-gray-600 dark:text-gray-300">{item.description}</p>
                         </div>
                     ))}
                 </div>

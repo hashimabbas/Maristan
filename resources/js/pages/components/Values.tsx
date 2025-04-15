@@ -1,43 +1,57 @@
 import React from 'react';
 import { TextAnimate } from "./../../../js/components/ui/magicui/text-animate";
+import { useTranslation } from 'react-i18next';
+import { cn } from "@/lib/utils";
+import { ReactNode } from 'react';
 
-interface ValuesProps { }
+interface ValuesProps {
+    className?: string;
+}
 
-const Values: React.FC<ValuesProps> = () => {
-    const values = [
+interface Value {
+    title: string;
+    description: string;
+    icon: string;
+}
+
+const Values: React.FC<ValuesProps> = ({ className }) => {
+    const { t } = useTranslation();
+    const isRtl = false; // Since the isRtl is not working i will hard code it to false
+
+    const values: Value[] = [
         {
-            title: 'Quality',
-            description: 'Uncompromising commitment to excellence.',
-            icon: '/icons/Quality.png', // Replace with your actual icon path
+            title: t('values.qualityTitle'),
+            description: t('values.qualityDescription'),
+            icon: '/icons/Quality.png',
         },
         {
-            title: 'Innovation',
-            description: 'Pioneering solutions for better healthcare.',
-            icon: '/icons/Innovation.png', // Replace with your actual icon path
+            title: t('values.innovationTitle'),
+            description: t('values.innovationDescription'),
+            icon: '/icons/Innovation.png',
         },
         {
-            title: 'Integrity',
-            description: 'Ethical business practices and transparency.',
-            icon: '/icons/Integrity.png', // Replace with your actual icon path
+            title: t('values.integrityTitle'),
+            description: t('values.integrityDescription'),
+            icon: '/icons/Integrity.png',
         },
         {
-            title: 'Compassion',
-            description: 'Empathy and care in everything we do.',
-            icon: '/icons/Compassion.png', // Replace with your actual icon path
+            title: t('values.compassionTitle'),
+            description: t('values.compassionDescription'),
+            icon: '/icons/Compassion.png',
         },
         {
-            title: 'Sustainability',
-            description: 'Environmentally responsible operations.',
-            icon: '/icons/Sustainability.png', // Replace with your actual icon path
+            title: t('values.sustainabilityTitle'),
+            description: t('values.sustainabilityDescription'),
+            icon: '/icons/Sustainability.png',
         },
     ];
 
     return (
-        <section className="py-16 mt-6 bg-gray-50 dark:bg-gray-900">
+        <section className={cn("py-16 mt-6 bg-gray-50 dark:bg-gray-900", className)}>
             <div className="container mx-auto px-4">
-                <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-white">
+                <h2 className="text-3xl font-bold text-center mb-12 text-primary dark:text-white">
                     <TextAnimate animation="scaleUp" by="text">
-                        Our Values
+                        {t('values.ourValues')}
                     </TextAnimate>
                 </h2>
 
@@ -53,16 +67,14 @@ const Values: React.FC<ValuesProps> = () => {
                                     alt={`${value.title} Icon`}
                                     className="w-16 h-16 object-contain mb-2"
                                 />
-                                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-50 text-center">
+                                <h3 className="text-xl font-semibold text-primary dark:text-gray-50 text-center">
                                     <TextAnimate animation="scaleUp" by="text">
                                         {value.title}
                                     </TextAnimate>
                                 </h3>
                             </div>
                             <p className="text-gray-700 dark:text-gray-400 leading-relaxed text-center">
-                                <TextAnimate animation="scaleUp" by="text">
-                                    {value.description}
-                                </TextAnimate>
+                                {value.description}
                             </p>
                         </div>
                     ))}

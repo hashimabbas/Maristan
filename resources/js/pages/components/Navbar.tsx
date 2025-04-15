@@ -1,11 +1,18 @@
 import { Link, usePage } from '@inertiajs/react';
 import { type SharedData } from '@/types';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { MenuIcon, XIcon } from 'lucide-react';
 import { Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "next-themes";
 import { useTranslation } from "react-i18next"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { cn } from "@/lib/utils"; // Assuming you have a utils file with cn
 
 interface NavbarProps {
     auth: {
@@ -13,6 +20,11 @@ interface NavbarProps {
     };
     locale: string;
 }
+
+const LANGUAGES = {
+    en: 'English',
+    ar: 'Arabic',
+};
 
 export default function Navbar({ auth, locale }: NavbarProps) {
     const { t, i18n } = useTranslation();
@@ -23,15 +35,38 @@ export default function Navbar({ auth, locale }: NavbarProps) {
         setTheme(theme === "light" ? "dark" : "light");
     };
 
-    const isRtl = locale === 'ar'; // Check if the language is Arabic
+    const isRtl = locale === 'ar';
 
-    // Function to handle language change
-    // const changeLanguage = (newLocale: string) => {
-    //     i18n.changeLanguage(newLocale);
-    //     // Use Inertia to navigate to the same page with the new locale
-    //     // Important: Make sure your Laravel routes handle the locale correctly!
-    //     window.location.href = route(route().current(), { ...route().params, locale: newLocale });
-    // };
+    const changeLanguage = useCallback((lng: string) => {
+        i18n.changeLanguage(lng);
+    }, [i18n]);
+
+    const dropdownMenuContentClass = cn(
+        "w-56",
+        "forceMount",
+        isRtl ? "right-0" : "left-0" // Adjust alignment based on RTL
+    );
+
+    const dropdownMenuItemClass = cn(
+        "cursor-pointer",
+        "select-none", // Prevent text selection
+        "py-2 px-3",
+        "hover:bg-accent",
+        "hover:text-accent-foreground",
+        "rounded-sm",
+        "outline-none", // Remove default focus outline
+        "transition-colors",
+        "data-[disabled]:pointer-events-none",
+        "data-[highlighted]:bg-accent",
+        "data-[highlighted]:text-accent-foreground",
+        isRtl ? "font-almarai" : "font-inter" // Apply font based on language
+    );
+
+    const linkClass = cn(
+        "hover:text-[#f53003] dark:hover:text-[#FF4433] dark:text-white block py-2 px-4 md:inline-block",
+        isRtl ? "font-almarai" : "font-inter" // Apply font based on language
+
+    );
 
     return (
         <header className="w-full py-4 bg-[#FDFDFC] dark:bg-[#0a0a0a] shadow-md sticky top-0 z-50">
@@ -72,7 +107,7 @@ export default function Navbar({ auth, locale }: NavbarProps) {
                         <li>
                             <Link
                                 href="/"
-                                className="hover:text-[#f53003] dark:hover:text-[#FF4433] dark:text-white block py-2 px-4 md:inline-block"
+                                className={linkClass}
                             >
                                 {t('home')}
                             </Link>
@@ -80,20 +115,27 @@ export default function Navbar({ auth, locale }: NavbarProps) {
                         <li>
                             <Link
                                 href="/about"
-                                className="hover:text-[#f53003] dark:hover:text-[#FF4433] dark:text-white block py-2 px-4 md:inline-block"
+                                className={linkClass}
                             >
-                                about
+                                {t('about')}
                             </Link>
                         </li>
                         <li>
                             <Link
                                 href="/contact"
-                                className="hover:text-[#f53003] dark:hover:text-[#FF4433] dark:text-white block py-2 px-4 md:inline-block"
+                                className={linkClass}
                             >
-                                contact
+                                {t('contact')}
                             </Link>
                         </li>
-
+                        <li>
+                            <Link
+                                href="/show_offers"
+                                className={linkClass}
+                            >
+                                {t('offers')}
+                            </Link>
+                        </li>
                         <li>
                             <Button variant="outline" size="icon" onClick={toggleTheme}>
                                 {theme === 'light' ? (
@@ -106,16 +148,22 @@ export default function Navbar({ auth, locale }: NavbarProps) {
                         </li>
 
                         {/* Language Switcher */}
-                        {/* <li>
-                            <button onClick={() => changeLanguage('en')} className="hover:text-[#f53003] dark:hover:text-[#FF4433] dark:text-white block py-2 px-4 md:inline-block">
-                                English
-                            </button>
-                        </li>
                         <li>
-                            <button onClick={() => changeLanguage('ar')} className="hover:text-[#f53003] dark:hover:text-[#FF4433] dark:text-white block py-2 px-4 md:inline-block">
-                                Arabic
-                            </button>
-                        </li> */}
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" className="data-[state=open]:bg-muted h-9 font-inter dark:text-white">
+                                        {LANGUAGES[i18n.language as keyof typeof LANGUAGES] || 'Language'}
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className={dropdownMenuContentClass} align="end" forceMount>
+                                    {Object.entries(LANGUAGES).map(([key, label]) => (
+                                        <DropdownMenuItem key={key} onClick={() => changeLanguage(key)} className={dropdownMenuItemClass}>
+                                            {label}
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </li>
 
                         {/* Authentication Links */}
 

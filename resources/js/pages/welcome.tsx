@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { type SharedData } from '@/types';
+import { type SharedData, PageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import Navbar from './components/Navbar';
 import TopHeader from './components/TopHeader';
@@ -16,22 +16,15 @@ import OurExclusiveOffers from './components/OurExclusiveOffers';
 import WhyChooseMaristan from './components/WhyChooseMaristan';
 import "./../i18n"
 import { useTranslation } from "react-i18next"
+import './../globals.css'
 
-interface WelcomeProps {
+interface WelcomeProps extends PageProps {
     auth: SharedData['auth'];
-    locale: string; // Add locale to the WelcomeProps interface
 }
 
 export default function Welcome({ auth }: WelcomeProps) {
-    const { t, i18n } = useTranslation();
-    const { props } = usePage<{ locale: string }>(); // Type the props returned by usePage
+    const { props } = usePage<{ locale: string }>();  // Type hint for props object
     const locale = props.locale;
-
-    useEffect(() => {
-        if (locale) {
-            i18n.changeLanguage(locale);
-        }
-    }, [locale, i18n]);
 
 
     return (

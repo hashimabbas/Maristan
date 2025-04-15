@@ -1,9 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
-import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
-import axios from 'axios';
+"use client"
+
+import * as React from "react"
+import {
+    ColumnDef,
+    ColumnFiltersState,
+    SortingState,
+    VisibilityState,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    useReactTable,
+} from "@tanstack/react-table"
+import { Button } from "@/components/ui/button"
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
 import {
     Dialog,
     DialogContent,
@@ -12,8 +30,12 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-
+import { PlaceholderPattern } from "@/components/ui/placeholder-pattern";
+import AppLayout from "@/layouts/app-layout";
+import { BreadcrumbItem } from "@/types";
+import { Head } from '@inertiajs/react';
+import axios from 'axios';
+import { useEffect } from 'react';
 
 interface Contact {
     id: number;
@@ -25,10 +47,6 @@ interface Contact {
     updated_at: string;
 }
 
-interface Props {
-    // No contacts prop needed anymore
-}
-
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
@@ -36,105 +54,136 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const Dashboard: React.FC<Props> = () => {
-    const [contacts, setContacts] = useState<Contact[]>([]);
+const columns: ColumnDef<Contact>[] = [
+    {
+        accessorKey: "name",
+        header: "Name",
+    },
+    {
+        accessorKey: "email",
+        header: "Email",
+    },
+    {
+        accessorKey: "phone",
+        header: "Phone",
+        cell: ({ row }) => row.original.phone || "-",
+    },
+    {
+        accessorKey: "message",
+        header: "Message",
+        cell: ({ row }) => (
+            <Dialog>
+                <DialogTrigger asChild>
+                    <Button variant="outline" size="sm">
+                        View Message
+                    </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Message from {row.original.name}</DialogTitle>
+                        <DialogDescription>{row.original.message}</DialogDescription>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
+        ),
+    },
+    {
+        accessorKey: "created_at",
+        header: "Date",
+        cell: ({ row }) => new Date(row.original.created_at).toLocaleDateString(),
+    },
+];
+
+const Dashboard: React.FC = () => {
+    const [contacts, setContacts] = React.useState<Contact[]>([]);
+    const [sorting, setSorting] = React.useState<SortingState>([])
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+    const [rowSelection, setRowSelection] = React.useState({});
+
+    const table = useReactTable({
+        data: contacts,
+        columns,
+        onSortingChange: setSorting,
+        onColumnFiltersChange: setColumnFilters,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        onColumnVisibilityChange: setColumnVisibility,
+        onRowSelectionChange: setRowSelection,
+        state: {
+            sorting,
+            columnFilters,
+            columnVisibility,
+            rowSelection,
+        },
+    })
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log("Fetching data...");
                 const response = await axios.get('/api/contacts');
-                console.log("Response data:", response.data);
                 setContacts(response.data);
-                console.log("Contacts state updated:", contacts);
             } catch (error) {
                 console.error("Error fetching contacts:", error);
             }
         };
-
         fetchData();
     }, []);
-
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
+            <div className="flex flex-col gap-4 p-4">
+                <div className="grid auto-rows-min gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+                    {[...Array(3)].map((_, i) => (
+                        <div key={i} className="border relative aspect-video overflow-hidden rounded-xl">
+                            <PlaceholderPattern className="absolute inset-0 w-full h-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+                        </div>
+                    ))}
                 </div>
-                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-                    <div className="p-6">
-                        <h1 className="text-2xl font-bold mb-4">Contact Messages</h1>
-
+                <div className="border relative min-h-[60vh] flex-1 overflow-hidden rounded-xl">
+                    <div className="p-2 sm:p-4">
+                        <h1 className="text-lg sm:text-2xl font-bold mb-4">Contact Messages</h1>
                         {contacts.length > 0 ? (
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Name
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Email
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Phone
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Message
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Date
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {contacts.map((contact) => (
-                                        <tr key={contact.id}>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                {contact.name}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {contact.email}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {contact.phone || '-'}
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-gray-500">
-                                                <Dialog>
-                                                    <DialogTrigger asChild>
-                                                        <Button variant="outline" size="sm">View Message</Button>
-                                                    </DialogTrigger>
-                                                    <DialogContent className="sm:max-w-[425px]">
-                                                        <DialogHeader>
-                                                            <DialogTitle>Message from {contact.name}</DialogTitle>
-                                                            <DialogDescription>
-                                                                {contact.message}
-                                                            </DialogDescription>
-                                                        </DialogHeader>
-                                                    </DialogContent>
-                                                </Dialog>
-
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {new Date(contact.created_at).toLocaleDateString()}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                            <div className="w-full overflow-x-auto">
+                                <Table>
+                                    <TableHeader>
+                                        {table.getHeaderGroups().map((headerGroup) => (
+                                            <TableRow key={headerGroup.id}>
+                                                {headerGroup.headers.map((header) => (
+                                                    <TableHead key={header.id}>
+                                                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                                    </TableHead>
+                                                ))}
+                                            </TableRow>
+                                        ))}
+                                    </TableHeader>
+                                    <TableBody>
+                                        {table.getRowModel().rows.length ? (
+                                            table.getRowModel().rows.map((row) => (
+                                                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                                                    {row.getVisibleCells().map((cell) => (
+                                                        <TableCell key={cell.id} className="text-xs sm:text-sm">
+                                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                        </TableCell>
+                                                    ))}
+                                                </TableRow>
+                                            ))
+                                        ) : (
+                                            <TableRow>
+                                                <TableCell colSpan={columns.length} className="h-24 text-center">
+                                                    No results.
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </div>
                         ) : (
                             <p>No contact messages yet.</p>
                         )}
-
                     </div>
                 </div>
             </div>

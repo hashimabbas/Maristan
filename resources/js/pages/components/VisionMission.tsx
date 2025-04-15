@@ -1,15 +1,22 @@
 import React from 'react';
 import { TextAnimate } from "./../../../js/components/ui/magicui/text-animate";
+import { useTranslation } from 'react-i18next';
+import { cn } from "@/lib/utils";
+import { ReactNode } from 'react';
 
-interface VisionMissionProps { }
+interface VisionMissionProps {
+    className?: string; // Optional class name for the component
+}
 
-const VisionMission: React.FC<VisionMissionProps> = () => {
+const VisionMission: React.FC<VisionMissionProps> = ({ className }) => {
+    const { t, i18n } = useTranslation();
+    const isRtl = i18n.language === 'ar';
     return (
-        <section className="py-16 bg-gray-50 dark:bg-gray-900">
+        <section className={cn("py-16 bg-gray-50 dark:bg-gray-900", className)}>
             <div className="container mx-auto px-4">
-                <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-white">
+                <h2 className="text-3xl font-bold text-center mb-12 text-primary dark:text-white">
                     <TextAnimate animation="scaleUp" by="text">
-                        Vision & Mission
+                        {t("visionMission.title")}
                     </TextAnimate>
                 </h2>
 
@@ -19,20 +26,17 @@ const VisionMission: React.FC<VisionMissionProps> = () => {
                         <div className="flex flex-col items-center text-center mb-6">
                             <img
                                 src="/icons/vision.png" // Replace with actual Vision icon URL
-                                alt="Vision Icon"
+                                alt={t("visionMission.visionIconAlt")}
                                 className="w-16 h-16 mr-4 object-contain"
                             />
-                            <h3 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">
+                            <h3 className="text-2xl font-semibold text-primary dark:text-gray-50">
                                 <TextAnimate animation="scaleUp" by="text">
-                                    Our Vision
+                                    {t("visionMission.ourVision")}
                                 </TextAnimate>
                             </h3>
                         </div>
-                        <p className="text-gray-700 dark:text-gray-400 leading-relaxed">
-                            <TextAnimate animation="blurInUp" by="character" once>
-                                To provide accessible, innovative pharmaceutical products and services, prioritizing
-                                customer satisfaction, sustainability, and community well-being.
-                            </TextAnimate>
+                        <p className="text-gray-700 dark:text-gray-400 leading-relaxed text-center">
+                            {t("visionMission.visionDescription")}
                         </p>
                     </div>
 
@@ -41,20 +45,17 @@ const VisionMission: React.FC<VisionMissionProps> = () => {
                         <div className="flex flex-col items-center mb-6">
                             <img
                                 src="/icons/mission.png" // Replace with actual Mission icon URL
-                                alt="Mission Icon"
+                                alt={t("visionMission.missionIconAlt")}
                                 className="w-16 h-16 mr-4 object-contain"
                             />
-                            <h3 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">
+                            <h3 className="text-2xl font-semibold text-primary dark:text-gray-50">
                                 <TextAnimate animation="scaleUp" by="text">
-                                    Our Mission
+                                    {t("visionMission.ourMission")}
                                 </TextAnimate>
                             </h3>
                         </div>
-                        <p className="text-gray-700 dark:text-gray-400 leading-relaxed">
-                            <TextAnimate animation="blurInUp" by="character" once>
-                                Transforming healthcare through excellence, delivering exceptional pharmaceutical
-                                solutions, & fostering a healthier tomorrow.
-                            </TextAnimate>
+                        <p className="text-gray-700 dark:text-gray-400 leading-relaxed text-center">
+                            {t("visionMission.missionDescription")}
                         </p>
                     </div>
                 </div>
